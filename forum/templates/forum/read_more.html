@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{ post.title }}
+{% endblock %}
+{% block content %}
+    <div class="card mb-3">
+        <div class="card-header">
+            {% if item.category %}
+                Category:{{ post.category }}
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{ post.title }}</h5>
+            <p class="card-text">{{ post.content|safe|linebreaks|truncatewords }}</p>
+            <a href="#" class="btn btn-primary">Update</a>
+            <a href="#" class="btn btn-primary">Delete</a>
+
+        </div>
+        <div class="card-footer text-muted">
+            {{ post.created_at|date }}
+        </div>
+    </div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

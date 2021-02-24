@@ -4,39 +4,35 @@
 {% endblock %}
 
 {% block sidebar %}
-    <div class="col-md-3">
-        <div class="list-group">
-            {% for item in categories %}
-                <a href="{% url 'category' item.pk %}" class="list-group-item list-group-item-action active"
-                   aria-current="true">
-                    {{ item.title }}
-                </a>
-            {% endfor %}
-        </div>
+    <div class="list-group">
+        {% for item in categories %}
+            <a href="{{ item.get_absolute_url }}" class="list-group-item list-group-item-action active"
+               aria-current="true">
+                {{ item.title }}
+            </a>
+        {% endfor %}
     </div>
 {% endblock %}
 
 {% block content %}
-    <div class="col-md-9">
-        {% for item in posts %}
-            <div class="card mb-3">
-                <div class="card-header">
-                    {% if item.category %}
-                        Category:{{ item.category }}
-                    {% endif %}
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ item.title }}</h5>
-                    <p class="card-text">{{ item.content }}</p>
-                    <a href="#" class="btn btn-primary">Read more</a>
-                </div>
-                <div class="card-footer text-muted">
-                    {{ item.created_at|date }}
-                </div>
+    {% for item in posts %}
+        <div class="card mb-3">
+            <div class="card-header">
+                {% if item.category %}
+                    Category:{{ item.category }}
+                {% endif %}
             </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ item.title }}</h5>
+                <p class="card-text">{{ item.content|safe|linebreaks|truncatewords:50 }}</p>
+                <a href="{{ item.get_absolute_url }}" class="btn btn-primary">Read more</a>
+            </div>
+            <div class="card-footer text-muted">
+                {{ item.created_at|date }}
+            </div>
+        </div>
 
-        {% endfor %}
-    </div>
+    {% endfor %}
 {% endblock %}
 
 
