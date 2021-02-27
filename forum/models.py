@@ -11,7 +11,7 @@ class Posts(models.Model):
     category = models.ForeignKey('Category', on_delete=models.PROTECT, null=True)
 
     def get_absolute_url(self):
-        return reverse('read_more', kwargs={"posts_id": self.pk})
+        return reverse('read_more', kwargs={"pk": self.pk})
 
     def __str__(self):
         return self.title
