@@ -9,6 +9,7 @@ class HomePosts(ListView):
     model = Posts
     template_name = 'forum/home_posts_list.html'
     context_object_name = 'posts'
+    queryset = Posts.objects.select_related('category')
 
 
 class PostsByCategory(ListView):
@@ -29,15 +30,4 @@ class CreatePost(CreateView):
     form_class = PostForm
     template_name = 'forum/create_post.html'
 
-# def create_post(request):
-#     if request.method == 'POST':
-#         form = PostForm(request.POST)
-#         if form.is_valid():
-#             post = form.save()
-#             return redirect('home')
-#     else:
-#         form = PostForm()
 
-# def read_more(request, posts_id):
-#     post = get_object_or_404(Posts, pk=posts_id)
-#     return render(request, 'forum/read_more.html', {'post': post})
