@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import AbstractUser
 
 
 class Posts(models.Model):
@@ -37,3 +38,11 @@ class Category(models.Model):
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
         ordering = ['title']
+
+
+class User(AbstractUser):
+    username = models.CharField('username', max_length=50, unique=True)
+    password = models.CharField('password', max_length=50)
+
+    def __str__(self):
+        return self.username

@@ -1,48 +1,46 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.hashers import make_password
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, DeleteView, CreateView
 
-from .models import Posts, Category
-from .forms import PostForm, UserRegisterFrom, UserLoginForm
-from django.contrib import messages
-from django.contrib.auth import login
+from .forms import PostForm, UserLoginForm
+from .models import Posts, Category, User
+
+
+def user_logout(request):
+    logout(request)
+    return redirect('home')
 
 
 def register(request):
     if request.method == 'POST':
-        form = UserRegisterFrom(request.POST)
-        if form.is_valid():
-            user = form.save()
+        username = request.POST.get('username')
+        password = request.POST.get('password1')
+        User.objects.create(username=username, password=make_password(password))
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
             login(request, user)
-            messages.success(request, 'Вы успешно заригестрировались')
             return redirect('home')
-
         else:
-            messages.error(request, 'Ошибка регистрации')
-            return redirect('register')
+            messages.info(request, 'Password or username is incorrect')
+
+        return redirect('login')
     else:
-        form = UserRegisterFrom()
-        return render(request, 'forum/register.html', {'form': form})
-
-
-# def myregistretion():
-# if request.method =='POST':
-#     form = MyRegistrationForm(request.POST)
-#     if form.is_valid():
-#           new_user =User()
-#           new_user.user_name = request.POST.get('username')
-#           new_user.password = request.POST.get(make_password('password1'))
-#           new_user.save()
-# else:
-#     form = RegistrationForm()
+        return render(request, 'forum/register.html')
 
 
 def user_login(request):
     if request.method == 'POST':
-        form = UserLoginForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
+        breakpoint()
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
             login(request, user)
             return redirect('home')
+        else:
+            messages.info(request, 'Password or username is incorrect')
     else:
         form = UserLoginForm()
         return render(request, 'forum/login.html', {'form': form})
