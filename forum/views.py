@@ -1,8 +1,8 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.hashers import make_password
-from django.shortcuts import render, redirect
-from django.views.generic import ListView, DeleteView, CreateView
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import ListView, DeleteView, CreateView, TemplateView
 
 from .forms import PostForm, UserLoginForm
 from .models import Posts, Category, User
@@ -32,7 +32,6 @@ def register(request):
 
 def user_login(request):
     if request.method == 'POST':
-        breakpoint()
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
@@ -64,11 +63,37 @@ class PostsByCategory(ListView):
         return Posts.objects.filter(category_id=self.kwargs['category_id'])
 
 
-class ReadMore(DeleteView):
-    model = Posts
-    context_object_name = 'post'
+def read_more(request, post_id):
+    post = get_object_or_404(Posts, pk=post_id)
+    if request.user.is_authenticated:
+        current_user = User.objects.get(id=request.user.id)
+        return render(request, 'forum/read_more.html', {'current_user': current_user, 'post': post})
+    else:
+        return render(request, 'forum/read_more.html', {'post': post})
 
 
 class CreatePost(CreateView):
     form_class = PostForm
     template_name = 'forum/create_post.html'
+    pass
+
+
+def delete_post(request, pk):
+    post = Posts.objects.get(pk=pk)
+    post.delete()
+    return redirect('home')
+
+
+def update_post(request, pk):
+    post = Posts.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.save()
+            return redirect('home')
+    context = {'post': post,
+               'form': PostForm(instance=post)
+               }
+    return render(request, 'forum/update_post.html',
+                  context)

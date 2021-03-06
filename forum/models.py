@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 
 
 class Posts(models.Model):
@@ -11,9 +12,10 @@ class Posts(models.Model):
     photo = models.ImageField(upload_to='photos/%Y/%m/%d/', blank=True)
     category = models.ForeignKey('Category', on_delete=models.PROTECT, null=True)
     views = models.ImageField(default=0)
+    author = models.ForeignKey('User', default=1, null=True, on_delete=models.CASCADE)
 
     def get_absolute_url(self):
-        return reverse('read_more', kwargs={"pk": self.pk})
+        return reverse('read_more', kwargs={"post_id": self.pk})
 
     def __str__(self):
         return self.title
