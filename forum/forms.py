@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 
-from .models import Posts
+from .models import Posts, Comments
 
 
 class UserLoginForm(AuthenticationForm):
@@ -20,3 +20,7 @@ class PostForm(forms.ModelForm):
         }
 
 
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comments
+        fields = ['text']
