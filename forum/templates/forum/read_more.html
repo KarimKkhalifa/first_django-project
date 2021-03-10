@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load comments_tree %}
 {% block title %}
     {{ post.title }}
 {% endblock %}
@@ -26,27 +25,24 @@
             {{ post.created_at|date }}
         </div>
     </div>
-    <p>Комментарии </p>
+    <p>Комментарии ({{ post.comments_posts.all.count }}) </p>
     <hr>
-    <div class="row">
-        <div class="col-md-3">
+    <ul>
+        {% for item in post.comments_posts.all %}
+            <li>
+                Date: {{ item.created_at }}<br>
+                Author: {{ item.author }}<br><br>
 
-        </div>
-        <div class="col-md-6">
-            {{ comments|comments_filter }}
-            <hr>
-            <div class="col-md-12">
-                <form action="{% url 'create_comment' %}" method="post">
-                    {% csrf_token %}
-                    {{ comment_form }}
-                    <input type="submit" class="btn btn-primary" value="send">
-                </form>
-            </div>
-        </div>
-        <div class="col-md-3">
+                {{ item.text }}
+            </li>
+        {% endfor %}
+    </ul>
 
-        </div>
-    </div>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" class="btn btn-success" value="send">
+    </form>
 
 
 
@@ -59,52 +55,6 @@
 
 
 
-        $(document).ready(function () {
-            $(".reply").on('click', function () {
-                var commentId = $(this).attr('data-id')
-                $("#form-" + commentId).fadeToggle();
-            })
-            $(".submit-reply").on('click', function (e) {
-                e.preventDefault()
-                var parentId = $(this).attr('data-submit-reply')
-                var id = $(this).attr('data-id')
-                var text = $("#form-" + id).find('textarea[name="comment-text"]').val();
-
-                function getCookie(name) {
-                    let cookieValue = null;
-                    if (document.cookie && document.cookie !== '') {
-                        const cookies = document.cookie.split(';');
-                        for (let i = 0; i < cookies.length; i++) {
-                            const cookie = cookies[i].trim();
-                            // Does this cookie string begin with the name we want?
-                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                break;
-                            }
-                        }
-                    }
-                    return cookieValue;
-                }
-
-                const csrftoken = getCookie('csrftoken');
-                data = {
-                    user: "{{ request.user.username }}",
-                    parentId: parentId,
-                    text: text,
-                    id: id,
-                    csrfmiddlewaretoken: csrftoken
-                }
-                $.ajax({
-                    method: "POST",
-                    data: data,
-                    url: "{% url 'create_child_comment' %}",
-                    success: function (data) {
-                        window.location.replace('posts/<int:post_id>/')
-                    }
-                })
-            })
-        })
-    </script>
 {% endblock %}
 
 

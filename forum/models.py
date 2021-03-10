@@ -15,7 +15,6 @@ class Posts(models.Model):
     category = models.ForeignKey('Category', on_delete=models.PROTECT, null=True)
     views = models.ImageField(default=0)
     author = models.ForeignKey('User', default=1, null=True, on_delete=models.CASCADE)
-    comments = GenericRelation('comments')
 
     def get_absolute_url(self):
         return reverse('read_more', kwargs={"post_id": self.pk})
@@ -54,25 +53,8 @@ class User(AbstractUser):
 
 
 class Comments(models.Model):
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Автор')
+    post = models.ForeignKey(Posts, on_delete=models.CASCADE, verbose_name='Post', blank=True, null=True,
+                             related_name='comments_posts')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор', blank=True, null=True)
     text = models.TextField(verbose_name='Текст комментария')
-    parent = models.ForeignKey(
-        'self',
-        verbose_name='Родительский комментарий',
-        blank=True,
-        null=True,
-        related_name='comment_children',
-        on_delete=models.CASCADE
-    )
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now=True)
-    is_child = models.BooleanField(default=False)
-
-    def __str__(self):
-        return str(self.id)
-    @property
-    def get_parent(self):
-        if not self.parent:
-            return ""
-        return self.parent

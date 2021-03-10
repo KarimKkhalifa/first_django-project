@@ -1,14 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.hashers import make_password
-from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
-from .utils import create_comments_tree
-from django.db import transaction
+
 from .forms import PostForm, UserLoginForm, CommentForm
-from .models import Posts, Category, User, Comments
+from .models import Posts, Category, User
 
 
 def user_logout(request):
@@ -68,46 +66,21 @@ class PostsByCategory(ListView):
 
 def read_more(request, post_id):
     post = get_object_or_404(Posts, pk=post_id)
-    comments = Posts.objects.first().comments.all()
-    result = create_comments_tree(comments)
-    form = CommentForm(request.POST)
-    if request.user.is_authenticated:
+    form = CommentForm
+    if request.user.is_authenticated and request.method == 'GET':
         current_user = User.objects.get(id=request.user.id)
         return render(request, 'forum/read_more.html',
-                      {'current_user': current_user, 'post': post, 'comments': result, 'form': form})
+                      {'current_user': current_user, 'form': form, 'post': post})
+    elif request.user.is_authenticated and request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.post = Posts.objects.get(pk=post_id)
+            obj.author = request.user
+            obj.save()
+            return redirect('home')
     else:
-        return render(request, 'forum/read_more.html', {'post': post, 'comments': result, 'form': form})
-
-
-def create_comment(request):
-    form = CommentForm(request.POST)
-    if form.is_valid():
-        new_comment = form.save(commit=False)
-        new_comment.user = request.user
-        new_comment.text = form.cleaned_data['text']
-        new_comment.content_type = ContentType.objects.get(model='post')
-        new_comment.object_id = 1
-        new_comment.parent = None
-        new_comment.is_child = False
-        new_comment.save()
-    return redirect('read_more')
-
-
-@transaction.atomic
-def create_child_comment(request):
-    user_name = request.POST.get('user')
-    current_id = request.POST.get('id')
-    text = request.POST.get('text')
-    user = User.objects.get(user_name=user_name)
-    content_type = ContentType.objects.get(model='post')
-    parent = Comments.objects.get(id=int(current_id))
-    is_child = False if not parent else True
-    Comments.objects.create(
-        user=user, text=text, content_type=content_type, object_id=1, parent=parent, is_child=is_child
-    )
-    comments = Posts.objects.first().comments.all()
-    comments_list = create_comments_tree(comments)
-    return render(request, 'forum/read_more.html', {'comments': comments_list})
+        return render(request, 'forum/read_more.html', {'post': post, })
 
 
 class CreatePost(CreateView):
