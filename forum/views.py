@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 
 from .forms import PostForm, UserLoginForm, CommentForm
-from .models import Posts, Category, User
+from .models import Posts, Category, User, Comments
 
 
 def user_logout(request):
@@ -89,8 +89,8 @@ class CreatePost(CreateView):
     pass
 
 
-def delete_post(request, pk):
-    post = Posts.objects.get(pk=pk)
+def delete_post(request, comment_id):
+    post = Posts.objects.get(pk=comment_id)
     post.delete()
     return redirect('home')
 
@@ -108,3 +108,9 @@ def update_post(request, pk):
                }
     return render(request, 'forum/update_post.html',
                   context)
+
+
+def delete_comment(request, pk):
+    comment = Comments.objects.get(pk=pk)
+    comment.delete()
+    return redirect('home')

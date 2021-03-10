@@ -30,10 +30,16 @@
     <ul>
         {% for item in post.comments_posts.all %}
             <li>
+                {{ item.text }}<br>
                 Date: {{ item.created_at }}<br>
                 Author: {{ item.author }}<br><br>
 
-                {{ item.text }}
+
+
+                {% if current_user.pk == post.author_id %}
+                    <a href="{% url 'delete_comment' item.id %}" class="btn btn-primary">Delete comment</a>
+                {% endif %}
+
             </li>
         {% endfor %}
     </ul>

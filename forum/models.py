@@ -58,3 +58,5 @@ class Comments(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор', blank=True, null=True)
     text = models.TextField(verbose_name='Текст комментария')
     created_at = models.DateTimeField(auto_now=True)
+
+

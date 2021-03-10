@@ -12,5 +12,6 @@ urlpatterns = [
     path('posts/<int:post_id>/', read_more, name='read_more'),
     path('posts/<int:pk>/delete', delete_post, name='delete'),
     path('posts/<int:pk>/update/', update_post, name='update'),
+    path('comment/<int:pk>delete/', delete_comment, name='delete_comment'),
 
 ]
