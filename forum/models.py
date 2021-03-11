@@ -1,9 +1,7 @@
+from django.contrib.auth.models import AbstractUser
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.urls import reverse
-from django.contrib.auth.models import AbstractUser
-from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericRelation
 
 
 class Posts(models.Model):
@@ -58,5 +56,6 @@ class Comments(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор', blank=True, null=True)
     text = models.TextField(verbose_name='Текст комментария')
     created_at = models.DateTimeField(auto_now=True)
+
 
 

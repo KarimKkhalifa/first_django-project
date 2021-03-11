@@ -19,7 +19,7 @@
                 <a href="{% url 'update' post.id %}" class="btn btn-primary">Update</a>
                 <a href="{% url 'delete' post.id %}" class="btn btn-primary">Delete</a>
             {% endif %}
-
+            {% include 'inc/_likes.html' with post_id=post.id %}
         </div>
         <div class="card-footer text-muted">
             {{ post.created_at|date }}
