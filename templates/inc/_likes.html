@@ -19,10 +19,11 @@
         <input type="hidden" name="post_id" value="{{ post_likes_id }}">
     {% endif %}
     <button type="submit" class="btn btn-danger">
+
         {% if not is_liked_bool %}
-            <i class="fi-xnluxl-heart"></i>
+            <i class="bi bi-suit-heart"></i>
         {% else %}
-            <i class="fi-xnsuxl-heart-solid"></i>
+            <i class="bi bi-suit-heart-fill"></i>
         {% endif %}
         <span class="likes-qty">{{ likes_counter }}</span>
     </button>

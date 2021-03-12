@@ -6,7 +6,6 @@ from likes.models import PostsLikes
 
 class AddLikeView(View):
     def post(self, request, *args, **kwargs):
-        breakpoint()
         post_id = int(request.POST.get('post_id'))
         user_id = int(request.POST.get('user_id'))
         url_from = request.POST.get('url_from')
@@ -24,7 +23,6 @@ class AddLikeView(View):
 
 
 class RemoveLike(View):
-    breakpoint()
     def post(self, request, *args, **kwargs):
         post_likes_id = int(request.POST.get('post_id'))
         url_from = request.POST.get('url_from')
