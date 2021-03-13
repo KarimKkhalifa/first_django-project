@@ -5,45 +5,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 
-from .forms import PostForm, UserLoginForm, CommentForm
-from .models import Posts, Category, User, Comments
-
-
-def user_logout(request):
-    logout(request)
-    return redirect('home')
-
-
-def register(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password1')
-        User.objects.create(username=username, password=make_password(password))
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('home')
-        else:
-            messages.info(request, 'Password or username is incorrect')
-
-        return redirect('login')
-    else:
-        return render(request, 'forum/register.html')
-
-
-def user_login(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('home')
-        else:
-            messages.info(request, 'Password or username is incorrect')
-    else:
-        form = UserLoginForm()
-        return render(request, 'forum/login.html', {'form': form})
+from .forms import PostForm, CommentForm
+from .models import Posts, Category, Comments
+from user.models import User
 
 
 class HomePosts(ListView):
@@ -73,12 +37,14 @@ def read_more(request, post_id):
                       {'current_user': current_user, 'form': form, 'post': post})
     elif request.user.is_authenticated and request.method == 'POST':
         form = CommentForm(request.POST)
+
+        url_from = request.POST.get('url_from')
         if form.is_valid():
             obj = form.save(commit=False)
             obj.post = Posts.objects.get(pk=post_id)
             obj.author = request.user
             obj.save()
-            return redirect('home')
+            return redirect(url_from)
     else:
         return render(request, 'forum/read_more.html', {'post': post, })
 
@@ -89,8 +55,8 @@ class CreatePost(CreateView):
     pass
 
 
-def delete_post(request, comment_id):
-    post = Posts.objects.get(pk=comment_id)
+def delete_post(request, pk):
+    post = Posts.objects.get(pk=pk)
     post.delete()
     return redirect('home')
 

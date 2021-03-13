@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'forum',
     'likes',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -62,7 +63,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'djangoProject.wsgi.application'
 
-AUTH_USER_MODEL = 'forum.User'
+AUTH_USER_MODEL = 'user.User'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 

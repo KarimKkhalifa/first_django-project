@@ -1,5 +1,6 @@
 from django.db import models
-from forum.models import Posts, User
+from forum.models import Posts
+from user.models import User
 
 
 class PostsLikes(models.Model):

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <h1>{{ current_user }}</h1>
+    {% if not posts.count %}
+        <div class="col-md-12" style="margin-top: 300px; margin-bottom: 300px ">
+            <h3>You have not posts <a href="{% url 'create' %}">Create your post</a></h3>
+        </div>
+    {% else %}
+        <h3>Your posts</h3>
+        {% for item in posts %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    {% if item.category %}
+                        Category:{{ item.category }}
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if item.photo %}
+                        <img src="{{ item.photo.url }}" width="350" class="float-left mr-3">
+                    {% endif %}
+                    <h5 class="card-title">{{ item.title }}</h5>
+                    <p class="card-text">{{ item.content|safe|linebreaks|truncatewords:50 }}</p>
+                    <a href="{{ item.get_absolute_url }}" class="btn btn-primary">Read more</a>
+                    {% include 'inc/_likes.html' with post_id=item.id %}
+                </div>
+                <div class="card-footer text-muted">
+                    {{ item.created_at|date }}
+                </div>
+            </div>
+
+        {% endfor %}
+    {% endif %}
+    <a href="{% url 'delete_user' current_user.pk %}">Delete account</a>
+{% endblock %}
+
+
+

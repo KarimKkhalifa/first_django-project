@@ -37,7 +37,9 @@
 
 
                 {% if current_user.pk == post.author_id %}
+
                     <a href="{% url 'delete_comment' item.id %}" class="btn btn-primary">Delete comment</a>
+
                 {% endif %}
 
             </li>
@@ -47,6 +49,7 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
+        <input type="hidden" name="url_from" value="{{ request.path }}">
         <input type="submit" class="btn btn-success" value="send">
     </form>
 

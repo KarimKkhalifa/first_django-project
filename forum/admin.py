@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Posts, Category, User, Comments
+from .models import Posts, Category,  Comments
 
 
 class PostsAdmin(admin.ModelAdmin):
@@ -8,6 +8,5 @@ class PostsAdmin(admin.ModelAdmin):
 
 admin.site.register(Posts)
 admin.site.register(Category)
-admin.site.register(User)
 admin.site.register(Comments)
 
