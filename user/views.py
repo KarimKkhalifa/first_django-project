@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.hashers import make_password
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 
 from forum.models import Posts
@@ -29,6 +30,7 @@ def register(request):
             login(request, user)
             return redirect('home')
         else:
+
             messages.info(request, 'Password or username is incorrect')
 
         return redirect('login')
@@ -46,6 +48,7 @@ def user_login(request):
             return redirect('home')
         else:
             messages.info(request, 'Password or username is incorrect')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
     else:
         form = UserLoginForm()
